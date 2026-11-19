@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ReView mark: a looping "replay" ring around a play triangle. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- replay ring (open arc) -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#7CF5D0"
+        android:strokeWidth="5.5"
+        android:strokeLineCap="round"
+        android:pathData="M72.5,40.5A22,22 0,1 0,76 54" />
+    <!-- arrow head of the ring -->
+    <path
+        android:fillColor="#7CF5D0"
+        android:pathData="M66,33L80,36.5L75.5,49.5Z" />
+    <!-- play triangle -->
+    <path
+        android:fillColor="#B79CFF"
+        android:pathData="M48,43.5L65,54L48,64.5Z" />
+</vector>

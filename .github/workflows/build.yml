@@ -1,0 +1,61 @@
+name: Build APK
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Build debug + signed release APK
+        run: |
+          chmod +x gradlew
+          set -o pipefail
+          ./gradlew --no-daemon assembleDebug assembleRelease 2>&1 | tee build.log
+
+      - name: Report build errors
+        if: failure()
+        run: |
+          grep -E "^e: |error:|What went wrong|Could not|Unresolved|> Task .*FAILED|Caused by|ERROR" build.log | head -150 > errs.txt || true
+          split -l 15 errs.txt part_ || true
+          for f in part_*; do
+            msg=$(sed -e 's/%/%25/g' -e 's/\r//g' "$f" | sed ':a;N;$!ba;s/\n/%0A/g')
+            echo "::error::$msg"
+          done
+
+      - name: Rename APKs
+        run: |
+          mkdir -p out
+          cp app/build/outputs/apk/release/app-release.apk out/ReView-v1.0.${{ github.run_number }}.apk
+          cp app/build/outputs/apk/debug/app-debug.apk out/ReView-v1.0.${{ github.run_number }}-debug.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ReView-apk
+          path: out/*.apk
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.${{ github.run_number }}
+          name: ReView v1.0.${{ github.run_number }}
+          body: |
+            ReView – Your Media. Your Control.
+            ReView-v1.0.${{ github.run_number }}.apk = signed release (recommended)
+            ReView-v1.0.${{ github.run_number }}-debug.apk = debug build
+            Built automatically from commit ${{ github.sha }}.
+          files: out/*.apk

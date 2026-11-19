@@ -1,0 +1,13 @@
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="ic_bg">#FF050507</color>
+
+    <style name="Theme.ReView" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@color/black</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="colorPrimary">#7CF5D0</item>
+        <item name="colorAccent">#B79CFF</item>
+    </style>
+</resources>
