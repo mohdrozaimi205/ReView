@@ -88,7 +88,6 @@ fun GalleryScreen(nav: NavController, cat: String) {
     var sortMenu by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) { vm.messages.collect { Toast.makeText(ctx, it, Toast.LENGTH_SHORT).show() } }
-    LaunchedEffect(initial) { vm.category.value = initial }
 
     Box(Modifier.fillMaxSize()) {
         Column(Modifier.fillMaxSize().statusBarsPadding()) {

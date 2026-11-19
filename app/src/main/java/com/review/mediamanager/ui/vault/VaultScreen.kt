@@ -78,13 +78,25 @@ class VaultViewModel(c: AppContainer) : SelectionViewModel(c.repository) {
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 }
 
-/** Applies FLAG_SECURE (blocks screenshots & recent-apps preview) while vault content is visible. */
+/** Reference-counted FLAG_SECURE so overlapping screens (vault → viewer) never drop the protection. */
+private object SecureFlag {
+    private var count = 0
+    fun acquire(activity: android.app.Activity) {
+        if (count++ == 0) activity.window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
+    }
+    fun release(activity: android.app.Activity) {
+        if (count > 0 && --count == 0) activity.window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
+    }
+}
+
+/** Blocks screenshots & recent-apps preview while vault content is visible. */
 @Composable
 fun SecureWindow(enabled: Boolean) {
     val activity = LocalContext.current.findActivity()
-    DisposableEffect(enabled) {
-        if (enabled) activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
-        onDispose { activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_SECURE) }
+    DisposableEffect(enabled, activity) {
+        val a = activity
+        if (enabled && a != null) SecureFlag.acquire(a)
+        onDispose { if (enabled && a != null) SecureFlag.release(a) }
     }
 }
 
