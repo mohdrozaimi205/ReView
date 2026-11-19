@@ -94,7 +94,7 @@ private val tabs = listOf(
     Tab(Routes.SETTINGS, "Settings", Icons.Rounded.Settings)
 )
 
-fun NavHostController.goTab(route: String) {
+fun androidx.navigation.NavController.goTab(route: String) {
     val target = if (route == Routes.GALLERY) Routes.gallery() else route
     navigate(target) {
         popUpTo(Routes.HOME) { saveState = true }

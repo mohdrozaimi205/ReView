@@ -25,7 +25,7 @@ abstract class ReViewDatabase : RoomDatabase() {
     companion object {
         fun create(context: Context): ReViewDatabase =
             Room.databaseBuilder(context, ReViewDatabase::class.java, "review.db")
-                .setJournalMode(JournalMode.WRITE_AHEAD_LOGGING)
+                .setJournalMode(RoomDatabase.JournalMode.WRITE_AHEAD_LOGGING)
                 .build()
     }
 }
